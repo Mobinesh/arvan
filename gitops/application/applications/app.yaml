@@ -4,7 +4,7 @@ metadata:
   name: blob-dpl-prod
   namespace: argocd
   annotations:                                           
-    argocd-image-updater.argoproj.io/image-list: myimage=mobinesh/arvan:1.0
+    argocd-image-updater.argoproj.io/image-list: myimage=mobinesh/arvan
     argocd-image-updater.argoproj.io/myimage.allow-tags: regexp:^\d+\.\d+$
     #argocd-image-updater.argoproj.io/myimage.pull-secret: pullsecret:ns/secret
     argocd-image-updater.argoproj.io/update-strategy: semver
@@ -19,7 +19,7 @@ spec:
   source:
       repoURL: https://github.com/Mobinesh/arvan.git
       targetRevision: HEAD
-      path: blob/overlays/prod
+      path: gitops/application/app/overlays/dev
   destination:
     server: https://kubernetes.default.svc
   syncPolicy:

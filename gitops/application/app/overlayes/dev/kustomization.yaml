@@ -2,14 +2,11 @@ apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 resources:
 - ../../base
-- ing.yaml
-#patchesStrategicMerge:
-#- service.yaml
 namespace: dev
 images:
-- name: reg.exconnect.org/build/backend-blob
-  newTag: dev-20241116-0619-80f250b5
+- name: mobinesh/arvan
+  newTag: 1.0
 configMapGenerator:
-- name: blob-cm
+- name: app-cm
   envs:
   - env

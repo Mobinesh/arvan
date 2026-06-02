@@ -1,18 +1,15 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: blob-svc
+  name: app-svc
   namespace: default
 spec:
   selector:
-    app: blob-depl
-  type: ClusterIP
+    app: app-depl
+  type: NodePort
   ports:
     - name: rest
       protocol: TCP
       port: 80
       targetPort: 80
-    - name: grpc
-      protocol: TCP
-      port: 5001
-      targetPort: 5001
+      nodePort: 30080
