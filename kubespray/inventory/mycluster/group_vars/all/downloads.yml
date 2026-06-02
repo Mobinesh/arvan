@@ -1,0 +1,3 @@
+kubeadm_download_url: "file:///tmp/kubeadm"
+kubectl_download_url: "file:///tmp/kubectl"
+kubelet_download_url: "file:///tmp/kubelet"

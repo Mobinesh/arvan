@@ -1,0 +1,4 @@
+kube_image_repo: "registry.k8s.io"
+gcr_image_repo: "gcr.io"
+quay_image_repo: "quay.io"
+docker_image_repo: "docker.io"

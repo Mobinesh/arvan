@@ -1,0 +1,8 @@
+http_proxy: "http://192.168.122.1:2081"
+https_proxy: "http://192.168.122.1:2081"
+no_proxy: "localhost,127.0.0.1,10.96.0.0/12,10.233.0.0/18,192.168.0.0/16"
+
+# containerd uses socks5 for image pulls
+containerd_http_proxy: "socks5://192.168.122.1:1077"
+containerd_https_proxy: "socks5://192.168.122.1:1077"
+containerd_no_proxy: "localhost,127.0.0.1,10.96.0.0/12,10.233.0.0/18,192.168.0.0/16"
