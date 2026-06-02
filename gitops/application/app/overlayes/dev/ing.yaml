@@ -1,0 +1,22 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: blob-ing
+  annotations:
+    nginx.ingress.kubernetes.io/use-regex: "true"
+    nginx.ingress.kubernetes.io/rewrite-target: /$1
+    nginx.ingress.kubernetes.io/proxy-body-size: "200m"
+    nginx.ingress.kubernetes.io/proxy-request-buffering: "off"
+spec:
+  ingressClassName: nginx
+  rules:
+  - host: exino.dev
+    http:
+      paths:
+      - path: /api/blob/(.*)
+        pathType: ImplementationSpecific
+        backend:
+          service:
+            name: blob-svc
+            port:
+              number: 80

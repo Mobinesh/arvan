@@ -1,0 +1,30 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: blob-dpl-prod
+  namespace: argocd
+  annotations:                                           
+    argocd-image-updater.argoproj.io/image-list: myimage=mobinesh/arvan:1.0
+    argocd-image-updater.argoproj.io/myimage.allow-tags: regexp:^\d+\.\d+$
+    #argocd-image-updater.argoproj.io/myimage.pull-secret: pullsecret:ns/secret
+    argocd-image-updater.argoproj.io/update-strategy: semver
+    argocd-image-updater.argoproj.io/write-back-method: git #:secret:argocd/write-back
+    argocd-image-updater.argoproj.io/write-back-target: kustomization
+    argocd-image-updater.argoproj.io/git-branch: main
+    argocd-image-updater.argoproj.io/force-update: "true"
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+spec:
+  project: default
+  source:
+      repoURL: https://github.com/Mobinesh/arvan.git
+      targetRevision: HEAD
+      path: blob/overlays/prod
+  destination:
+    server: https://kubernetes.default.svc
+  syncPolicy:
+    syncOptions:
+    - Validate=true
+    - CreateNamespace=false
+    - PrunePropagationPolicy=foreground
+    - PruneLast=true

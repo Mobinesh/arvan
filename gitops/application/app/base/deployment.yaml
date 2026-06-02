@@ -1,0 +1,99 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: app-dpl
+  namespace: default
+  labels:
+    app: app-depl
+spec:
+  replicas: 1
+  revisionHistoryLimit: 1
+  selector:
+    matchLabels:
+      app: app-depl
+  template:
+    metadata:
+      annotations:
+        prometheus.io/port: "80"
+        prometheus.io/scrape: "true"
+        prometheus.io/path: '/metrics'
+        vault.security.banzaicloud.io/vault-addr: "https://vault.vault:8200"
+        vault.security.banzaicloud.io/vault-role: "default"
+        vault.security.banzaicloud.io/vault-skip-verify: "true"
+        vault.security.banzaicloud.io/vault-agent: "false" 
+        vault.security.banzaicloud.io/vault-path: "kubernetes"
+      labels:
+        app: app-depl
+    spec:
+      affinity:
+        podAntiAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            - labelSelector:
+                matchExpressions:
+                  - key: kubernetes.io/hostname
+                    operator: In
+                    values:
+                      - exinobetaproductionworker2
+              topologyKey: kubernetes.io/hostname
+      imagePullSecrets:
+      - name: reg-exconnect
+      serviceAccountName: default
+      containers:
+      - name: app-depl
+        image: reg.exconnect.org/build/backend-app:1.0.0
+        command: ["dotnet", "appApi.dll"]
+        resources:
+          requests:
+            memory: "500Mi"
+            cpu: "500m"
+          limits:
+            memory: "1G"
+            cpu: "500m"
+        securityContext:
+            privileged: false
+        #    #runAsNonRoot: true
+        #    #readOnlyRootFilesystem: true
+            allowPrivilegeEscalation: false
+        env:
+          - name: DB_ADDR
+            valueFrom:
+              secretKeyRef:
+                name: app-sec
+                key: DB_ADDR
+        envFrom:
+          - configMapRef:
+              name: app-cm   
+        livenessProbe:
+            httpGet:
+              path: /healthcheck
+              port: 80
+            failureThreshold: 3
+            initialDelaySeconds: 30
+            periodSeconds: 2
+            successThreshold: 1
+            timeoutSeconds: 2
+        readinessProbe:
+            httpGet:
+              path: /healthcheck
+              port: 80
+            failureThreshold: 3
+            initialDelaySeconds: 30
+            periodSeconds: 2
+            successThreshold: 1
+            timeoutSeconds: 2
+        volumeMounts:
+        - name: pvc-mount
+          mountPath: /storage
+        ports:
+          - containerPort: 80 
+          - containerPort: 8090
+          - containerPort: 5001
+
+        
+      volumes:
+      - name: pvc-mount
+        persistentVolumeClaim:
+          claimName: local-pvc
+
+
+
